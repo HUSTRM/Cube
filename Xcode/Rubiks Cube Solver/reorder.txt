@@ -1,0 +1,179 @@
+参考这份代码写出中心面变化之后的解。
+同样为20步，每执行一次，后面的所有步骤的面都变化。原理在word文档里。
+
+/**
+ *F\F’\F2：不变；
+ *L\L’\L2：不变；
+ *B\B’\B2：L和R不变，F<->B，D<->U；
+ *R\R’\R2：F和B不变，D<->U，L<->R；
+ *U\U’\U2：F和B不变，R->U->L->D->R   status = 1
+ *          或L和R不变，B->U->F->D->B    status = -1；
+ *D\D’\D2：F和B不变，R->D->L->U->R   status = 1
+ *          或L和R不变，B->D->F->U->B   status = -1；
+ * @param answer
+ * @return Reordered Answer
+ */
+
+#STATUS#变量表示选哪一种方案，有两个值可以选择，是由手指方向和一个考虑单元共同作用决定的。
+具体是提前算出每一步中间的方向还是执行的时候实时选择，这个有待商榷。
+
+char changeCenter(char last, char orig, int status){
+    char curr;
+    if(last == 'F'){
+        curr = orig;
+    }else if(last == 'L'){
+        curr = orig;
+    }else if(last == 'U'){
+        if(status == 1){
+            switch (orig){
+                case 'U':
+                    curr = 'L';
+                    break;
+                case 'R':
+                    curr = 'U';
+                    break;
+                case 'L':
+                    curr = 'D';
+                    break;
+                case 'D':
+                    curr = 'R';
+                    break;
+                case 'F':
+                    curr = 'F';
+                    break;
+                case 'B':
+                    curr = 'B';
+                    break;
+            }
+        }else if(status == -1){
+            switch (orig){
+                case 'U':
+                    curr = 'F';
+                    break;
+                case 'R':
+                    curr = 'R';
+                    break;
+                case 'L':
+                    curr = 'L';
+                    break;
+                case 'D':
+                    curr = 'B';
+                    break;
+                case 'F':
+                    curr = 'D';
+                    break;
+                case 'B':
+                    curr = 'U';
+                    break;
+            }
+        }
+    }else if(last == 'D') {
+        if (status == 1) {
+            switch (orig) {
+                case 'U':
+                    curr = 'R';
+                    break;
+                case 'R':
+                    curr = 'D';
+                    break;
+                case 'L':
+                    curr = 'U';
+                    break;
+                case 'D':
+                    curr = 'L';
+                    break;
+                case 'F':
+                    curr = 'F';
+                    break;
+                case 'B':
+                    curr = 'B';
+                    break;
+            }
+        } else if (status == -1) {
+            switch (orig) {
+                case 'U':
+                    curr = 'B';
+                    break;
+                case 'R':
+                    curr = 'R';
+                    break;
+                case 'L':
+                    curr = 'L';
+                    break;
+                case 'D':
+                    curr = 'F';
+                    break;
+                case 'F':
+                    curr = 'U';
+                    break;
+                case 'B':
+                    curr = 'D';
+                    break;
+            }
+        }
+    }else if(last == 'B'){
+        switch (orig){
+            case 'U':
+                curr = 'D';
+                break;
+            case 'R':
+                curr = 'R';
+                break;
+            case 'L':
+                curr = 'L';
+                break;
+            case 'D':
+                curr = 'U';
+                break;
+            case 'F':
+                curr = 'B';
+                break;
+            case 'B':
+                curr = 'F';
+                break;
+        }
+    }else if(last == 'R'){
+        switch (orig){
+            case 'U':
+                curr = 'D';
+                break;
+            case 'R':
+                curr = 'L';
+                break;
+            case 'L':
+                curr = 'R';
+                break;
+            case 'D':
+                curr = 'U';
+                break;
+            case 'F':
+                curr = 'F';
+                break;
+            case 'B':
+                curr = 'B';
+                break;
+        }
+    }else{
+        cout<<"error in answer"<<endl;
+        return '0';
+    }
+    return curr;
+}
+
+
+string Reorder(string answer) {
+   answer = "D2B2UF2LFR'LD2R2BR2L2UD2L2U'DR2D";
+   string str = answer.substr(0, answer.size());
+   for(unsigned int i = 0; i<answer.length(); i++){
+       if(answer.at(i) == '\0' || answer.at(i) == '\'') break;
+       else{
+           for(unsigned int j = i + 1; j<answer.length(); j++){
+               if(answer.at(j) == '\0' || answer.at(j) == '\'') break;
+               else{
+                   str.at(j) = changeCenter(answer.at(j), str.at(j), #STATUS#);
+               }
+           }
+       }
+   }
+   return str;
+}
